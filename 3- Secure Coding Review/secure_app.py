@@ -8,6 +8,7 @@ vulnerabilities fixed. Each fix is documented with comments.
 import sqlite3
 import os
 import hashlib
+import hmac
 import secrets
 import html as html_module
 import logging
@@ -64,7 +65,7 @@ def read_user_file(filename):
     if not requested_path.startswith(base_dir):
         return "Access denied."
 
-    if ".." in filename or filename.startswith("/"):
+    if filename.startswith("/") or filename.startswith("\\"):
         return "Access denied."
 
     try:
@@ -99,7 +100,7 @@ def verify_password(stored, password):
     salt = stored[:32]
     key = stored[32:]
     new_key = hashlib.pbkdf2_hmac("sha256", password.encode("utf-8"), salt, 100000)
-    return key == new_key
+    return hmac.compare_digest(key, new_key)
 
 def register_user(username, password):
     users_db[username] = hash_password(password)
@@ -113,20 +114,44 @@ def login_user(username, password):
 # FIX 7: Insecure Use of eval() — Use Safe Alternatives
 # ============================================================
 import ast
+import operator
+
+_allowed_ops = {
+    ast.Add: operator.add,
+    ast.Sub: operator.sub,
+    ast.Mult: operator.mul,
+    ast.Div: operator.truediv,
+}
+
+def _safe_eval(node):
+    if isinstance(node, ast.Expression):
+        return _safe_eval(node.body)
+    if isinstance(node, ast.Constant) and isinstance(node.value, (int, float)):
+        return node.value
+    if isinstance(node, ast.UnaryOp) and isinstance(node.op, (ast.UAdd, ast.USub)):
+        val = _safe_eval(node.operand)
+        return +val if isinstance(node.op, ast.UAdd) else -val
+    if isinstance(node, ast.BinOp) and type(node.op) in _allowed_ops:
+        return _allowed_ops[type(node.op)](_safe_eval(node.left), _safe_eval(node.right))
+    raise ValueError("Unsupported operation")
 
 def calculate(expression):
     try:
-        result = ast.literal_eval(expression)
+        tree = ast.parse(expression, mode="eval")
+        result = _safe_eval(tree)
         return result
-    except (ValueError, SyntaxError):
+    except (ValueError, SyntaxError, TypeError):
         return "Invalid expression."
 
 # ============================================================
 # FIX 8: Predictable Session Tokens — Use Cryptographically
 #         Random Tokens
 # ============================================================
+sessions = {}
+
 def create_session(username):
     token = secrets.token_hex(32)
+    sessions[token] = username
     return token
 
 # ============================================================
@@ -151,8 +176,9 @@ def process_payment(amount, divisor):
 #         But we still add validation.
 # ============================================================
 def get_user_input(prompt="Enter your choice: "):
-    user_input = input(prompt)
-    if not user_input.isalnum() and user_input not in ["1", "2", "3", "4", "5", "6", "7", "8", "9"]:
+    user_input = input(prompt).strip()
+    valid_choices = ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
+    if user_input not in valid_choices:
         return "1"
     return user_input
 
