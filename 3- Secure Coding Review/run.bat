@@ -66,45 +66,51 @@ goto menu
 :view_report
 cls
 echo ============================================
-echo  Opening review_report.md
+echo  Opening review_report.md in Notepad
 echo ============================================
 echo.
+echo  Close Notepad when done, then press any key
+echo  to return to the menu.
+echo.
 if exist review_report.md (
-    start notepad.exe review_report.md
+    start /wait notepad.exe review_report.md
 ) else (
     echo [ERROR] review_report.md not found.
 )
-echo Press any key to return to menu...
 pause >nul
 goto menu
 
 :view_vulnerable
 cls
 echo ============================================
-echo  Opening vulnerable_app.py
+echo  Opening vulnerable_app.py in Notepad
 echo ============================================
 echo.
+echo  Close Notepad when done, then press any key
+echo  to return to the menu.
+echo.
 if exist vulnerable_app.py (
-    start notepad.exe vulnerable_app.py
+    start /wait notepad.exe vulnerable_app.py
 ) else (
     echo [ERROR] vulnerable_app.py not found.
 )
-echo Press any key to return to menu...
 pause >nul
 goto menu
 
 :view_secure
 cls
 echo ============================================
-echo  Opening secure_app.py
+echo  Opening secure_app.py in Notepad
 echo ============================================
 echo.
+echo  Close Notepad when done, then press any key
+echo  to return to the menu.
+echo.
 if exist secure_app.py (
-    start notepad.exe secure_app.py
+    start /wait notepad.exe secure_app.py
 ) else (
     echo [ERROR] secure_app.py not found.
 )
-echo Press any key to return to menu...
 pause >nul
 goto menu
 

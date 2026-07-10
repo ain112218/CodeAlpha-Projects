@@ -319,29 +319,30 @@ Running Bandit on `vulnerable_app.py` produces the following output:
 
 ```
 Test results:
->> Issue: [B105:hardcoded_password_string] Possible hardcoded password
-   Location: vulnerable_app.py:26
+>> Issue: [B404:blacklist] Consider possible security implications associated with the subprocess module.
+   Severity: Low   Confidence: High
+   CWE: CWE-78
+   Location: vulnerable_app.py:23
 
->> Issue: [B608:hardcoded_sql_expressions] Possible SQL injection
-   Location: vulnerable_app.py:34
+>> Issue: [B105:hardcoded_password_string] Possible hardcoded password: 'SuperSecret123!'
+   Severity: Low   Confidence: Medium
+   CWE: CWE-259
+   Location: vulnerable_app.py:29
 
->> Issue: [B602:subprocess_popen_with_shell_equals_true] subprocess call with shell=True
-   Location: vulnerable_app.py:41
+>> Issue: [B608:hardcoded_sql_expressions] Possible SQL injection vector through string-based query construction.
+   Severity: Medium   Confidence: Low
+   CWE: CWE-89
+   Location: vulnerable_app.py:40
 
->> Issue: [B108:hardcoded_tmp_directory] Use of hardcoded file path
-   Location: vulnerable_app.py:48
+>> Issue: [B602:subprocess_popen_with_shell_equals_true] subprocess call with shell=True identified, security issue.
+   Severity: High   Confidence: High
+   CWE: CWE-78
+   Location: vulnerable_app.py:50
 
->> Issue: [B102:exec_used] Use of exec detected
-   Location: vulnerable_app.py:73
-
->> Issue: [B307:eval] Use of eval detected
-   Location: vulnerable_app.py:73
-
->> Issue: [B110:try_except_pass] Try, Except without action
-   Location: vulnerable_app.py:91
-
->> Issue: [B101:assert_used] Use of assert detected
-   Location: vulnerable_app.py:97
+>> Issue: [B307:blacklist] Use of possibly insecure function - consider using safer alternatives.
+   Severity: Medium   Confidence: High
+   CWE: CWE-78
+   Location: vulnerable_app.py:86
 ```
 
 > **Note:** Some vulnerabilities (like predictable session tokens and weak password storage) require
