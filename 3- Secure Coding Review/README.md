@@ -18,51 +18,44 @@ A secure code review is a manual or automated inspection of source code to find 
 
 | File | Purpose |
 |------|---------|
+| `setup.bat` | One-time setup — checks Python, creates virtual environment, installs Bandit |
+| `run.bat` | Interactive menu — run scans, view reports, browse source code |
 | `vulnerable_app.py` | A sample banking app with **10 intentional security flaws** to audit |
 | `secure_app.py` | The same app with **all vulnerabilities fixed** |
 | `review_report.md` | The full **secure coding review report** — findings, risk ratings, and fixes |
-| `requirements.txt` | Python dependencies (install with `pip`) |
-| `README.md` | This file — a step-by-step guide for beginners |
+| `requirements.txt` | Python dependencies (Bandit) |
+| `README.md` | This file |
 
-## How to Run a Secure Code Review — Step by Step
+## How to Use
 
-> No prior security experience? No problem. Follow the steps below.
+### 1. Run Setup (one time only)
 
-### Step 1: Install Python
+Double-click **`setup.bat`**.
 
-Download and install Python 3.8+ from [python.org](https://www.python.org/downloads/).  
-During setup, check **"Add Python to PATH"**.
+This will:
+- Verify Python is installed
+- Create an isolated virtual environment (`venv/`)
+- Install Bandit (static analysis tool)
 
-Verify it works:
-```
-python --version
-```
+You only need to do this once.
 
-### Step 2: Install Dependencies
+### 2. Run the Review
 
-Open a terminal (Command Prompt or PowerShell) in this folder and run:
+Double-click **`run.bat`**.
 
-```
-pip install -r requirements.txt
-```
+This opens an interactive menu where you can:
 
-This installs **Bandit** — a static analysis tool that automatically finds security issues in Python code.
+| Option | What It Does |
+|--------|-------------|
+| **1** | Run Bandit on `vulnerable_app.py` — see what automated tools catch |
+| **2** | Run Bandit on `secure_app.py` — confirm no issues remain |
+| **3** | Open the full review report (`review_report.md` in Notepad) |
+| **4** | Open the vulnerable source code for manual inspection |
+| **5** | Open the fixed source code to compare fixes |
 
-### Step 3: Run a Static Analysis (Automated Scan)
+### 3. Manual Code Review
 
-Run Bandit on the vulnerable app to see what it catches automatically:
-
-```
-bandit -r vulnerable_app.py
-```
-
-Bandit will scan the code and print a report of security issues it detected.  
-This is called **Static Application Security Testing (SAST)**.
-
-### Step 4: Manual Code Review
-
-Open `vulnerable_app.py` in any text editor (Notepad, VS Code, etc.).  
-Read through the code and look for anything suspicious. Ask yourself:
+Open `vulnerable_app.py` and look for:
 
 - Is user input trusted without validation?
 - Are passwords or secrets visible in plain text?
@@ -70,16 +63,6 @@ Read through the code and look for anything suspicious. Ask yourself:
 - Are error messages leaking sensitive information?
 
 Compare what you find with the Bandit results — some issues are **only visible to a human reviewer**.
-
-### Step 5: Review the Report
-
-Open `review_report.md` to see the **complete findings document**.  
-It lists every vulnerability found, explains why it's dangerous, and shows how to fix it.
-
-### Step 6: Compare with the Secure Version
-
-Open `secure_app.py` to see how all the issues were fixed.  
-Each fix is commented so you can understand **why** the change was made.
 
 ## Vulnerability Summary
 
