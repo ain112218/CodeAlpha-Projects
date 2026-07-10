@@ -1,0 +1,7 @@
+✅
+TASK 4: Network Intrusion Detection System 
+● Set up a network-based intrusion detection system using tools like Snort or Suricata. 
+● 2. Configure rules and alerts to detect suspicious or malicious activity. 
+● 3. Monitor network traffic continuously for potential threats. 
+● 4. Implement response mechanisms for detected intrusions. 
+● 5. Optionally, visualize detected attacks using dashboards or graphs. 
