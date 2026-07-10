@@ -1,0 +1,42 @@
+{
+  "syn_flood": {
+    "enabled": true,
+    "threshold": 50,
+    "window": 10,
+    "severity": "CRITICAL",
+    "description": "Detects SYN flood attacks when threshold of SYN packets from a single IP is exceeded"
+  },
+  "port_scan": {
+    "enabled": true,
+    "threshold": 15,
+    "window": 30,
+    "severity": "HIGH",
+    "description": "Detects port scanning when a source IP connects to too many unique ports"
+  },
+  "icmp_flood": {
+    "enabled": true,
+    "threshold": 30,
+    "window": 10,
+    "severity": "HIGH",
+    "description": "Detects ICMP (ping) flood attacks"
+  },
+  "suspicious_ports": {
+    "enabled": true,
+    "ports": [4444, 5555, 6666, 31337, 12345, 54321],
+    "severity": "HIGH",
+    "description": "Flags connections to known malware/C2 ports"
+  },
+  "large_payload": {
+    "enabled": true,
+    "max_size": 8000,
+    "severity": "MEDIUM",
+    "description": "Detects unusually large packet payloads that may indicate data exfiltration"
+  },
+  "dns_tunnel": {
+    "enabled": true,
+    "threshold": 100,
+    "window": 60,
+    "severity": "HIGH",
+    "description": "Detects potential DNS tunneling based on high DNS query volume"
+  }
+}
